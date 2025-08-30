@@ -1,0 +1,47 @@
+[
+  {
+    "host": "45.33.32.156",
+    "port": 21,
+    "proto": "tcp",
+    "service": "tcpwrapped",
+    "product": "Unknown",
+    "version": "Unknown",
+    "cves": []
+  },
+  {
+    "host": "45.33.32.156",
+    "port": 22,
+    "proto": "tcp",
+    "service": "ssh",
+    "product": "OpenSSH",
+    "version": "6.6.1p1 Ubuntu 2ubuntu2.13",
+    "cves": []
+  },
+  {
+    "host": "45.33.32.156",
+    "port": 80,
+    "proto": "tcp",
+    "service": "http",
+    "product": "Apache httpd",
+    "version": "2.4.7",
+    "cves": []
+  },
+  {
+    "host": "45.33.32.156",
+    "port": 9929,
+    "proto": "tcp",
+    "service": "nping-echo",
+    "product": "Nping echo",
+    "version": "Unknown",
+    "cves": []
+  },
+  {
+    "host": "45.33.32.156",
+    "port": 31337,
+    "proto": "tcp",
+    "service": "tcpwrapped",
+    "product": "Unknown",
+    "version": "Unknown",
+    "cves": []
+  }
+]
