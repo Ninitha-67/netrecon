@@ -38,3 +38,45 @@ It’s designed for **educational purposes** and ethical hacking practice in con
 
 ## 📦 Project Structure
 
+\`\`\`netrecon/
+├── main.py # Entry point: scan + CVE lookup + report generation
+├── recon.py # Core Nmap scanning and service enumeration functions
+├── requirements.txt # Python dependencies
+├── scan_report.json # Generated JSON report of scan results
+├── .env # Optional: Store NVD_API_KEY securely
+└── README.md # Project overview and instructions
+
+---
+
+## 🚀 How to Run
+
+### 1️⃣ Clone the repository:
+```bash
+git clone https://github.com/Ninitha-67/netrecon.git
+cd netrecon
+
+### 2️⃣ Install dependencies:
+```bash
+pip install -r requirements.txt
+
+###3️⃣ (Optional) Set NVD API key for vulnerability lookups:
+
+Windows (PowerShell):
+```bash
+$env:NVD_API_KEY="your_api_key_here"
+
+###4️⃣ Run the tool:
+```bash
+python main.py
+
+---
+
+###⚠️ Disclaimer
+
+This project is strictly for educational purposes. Do NOT scan or exploit networks without permission. Always follow responsible disclosure practices.
+
+---
+
+###👩‍💻 Author
+
+Ninitha P – final Year BCA Student | Cybersecurity Enthusiast
