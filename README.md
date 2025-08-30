@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # 🔍 NetRecon – Network Recon & Vulnerability Scanner
 
 A Python-based offensive security tool that performs **network reconnaissance**, identifies open ports, detects services and versions, and queries the **NVD database for vulnerabilities (CVEs)**. This tool generates **tabular console reports** and a **JSON report** for analysis.
@@ -83,6 +82,7 @@ This project is strictly for educational purposes. Do NOT scan or exploit networ
 ## 👩‍💻 Author
 
 -Ninitha P – final Year BCA Student | Cybersecurity Enthusiast
+
 -Guided by mentors for academic research & SOC tools
 
 ---
