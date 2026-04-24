@@ -1,1 +1,6 @@
 requests
+python-nmap
+tabulate
+python-dotenv
+flask
+python-docx

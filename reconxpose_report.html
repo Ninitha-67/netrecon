@@ -1,0 +1,388 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ReconXpose Dashboard</title>
+    <style>
+        :root {
+            --bg: #000;
+            --panel: #121212;
+            --text: #f2e9ff;
+            --muted: #c5b7d4;
+            --purple: #473c96;
+            --teal: #0f5a4e;
+            --orange: #91411f;
+            --blue: #1c4f88;
+            --green: #37670c;
+            --gold: #8c5a08;
+            --gray: #4a4a4a;
+            --card-border: rgba(255,255,255,.25);
+        }
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: Arial, Helvetica, sans-serif; background: var(--bg); color: var(--text); }
+        .wrap { max-width: 1240px; margin: 0 auto; padding: 28px 26px 48px; }
+        .hero, .section-title, .section-subtitle, .footer-note { text-align: center; }
+        .hero { background: var(--purple); border: 2px solid #b3a3ff; border-radius: 22px; padding: 18px 20px; margin-bottom: 34px; }
+        .hero h1 { margin: 0; font-size: clamp(2rem, 4vw, 3.5rem); }
+        .hero p { margin: 8px 0 0; color: #d5d0f8; font-size: clamp(1rem, 2vw, 1.6rem); }
+        .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin: 24px 0 34px; }
+        .metric { background: var(--panel); border: 1px solid var(--card-border); border-radius: 18px; padding: 16px; min-height: 96px; }
+        .metric strong { display: block; font-size: 2rem; margin-bottom: 6px; }
+        .metric span { color: var(--muted); }
+        .table-wrap { overflow-x: auto; margin-top: 14px; border-radius: 18px; border: 1px solid rgba(255,255,255,.12); background: #101010; }
+        .table { width: 100%; border-collapse: collapse; min-width: 980px; }
+        .table th, .table td { padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,.08); text-align: left; vertical-align: top; }
+        .table th { background: #1c1c1c; color: #f0e7ff; position: sticky; top: 0; }
+        .table tr:hover td { background: rgba(255,255,255,.03); }
+        .status { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: .82rem; font-weight: 700; }
+        .status.live { background: #14532d; color: #bbf7d0; }
+        .status.unavailable { background: #3f3f46; color: #e4e4e7; }
+        .status.error { background: #7f1d1d; color: #fecaca; }
+        .status.sent { background: #14532d; color: #bbf7d0; }
+        .status.not_sent { background: #3f3f46; color: #e4e4e7; }
+        .status-box { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 14px; }
+        .status-card { background: #161616; border: 1px solid rgba(255,255,255,.12); border-radius: 16px; padding: 14px; }
+        .status-card h4 { margin: 0 0 8px; }
+        .section { margin: 28px 0 40px; }
+        .section-title { border-radius: 16px; padding: 16px 20px; font-weight: 800; font-size: 1.4rem; border: 1px solid rgba(255,255,255,.28); margin-bottom: 10px; }
+        .section-title.teal { background: linear-gradient(180deg, #105f4e, #0c4d42); }
+        .section-title.orange { background: linear-gradient(180deg, #94421f, #763317); }
+        .section-title.blue { background: linear-gradient(180deg, #1d558e, #164170); }
+        .section-title.green { background: linear-gradient(180deg, #3b6710, #2f530b); }
+        .section-title.gold { background: linear-gradient(180deg, #8d5d0b, #6f4807); }
+        .section-subtitle { color: var(--muted); margin: 0 0 16px; font-size: 1rem; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+        .card { border-radius: 18px; padding: 18px 16px; border: 1px solid rgba(255,255,255,.28); min-height: 118px; }
+        .card h3 { margin: 0 0 10px; font-size: 1.35rem; color: #e6dfeb; }
+        .card p { margin: 0; color: #d6b7ac; line-height: 1.45; }
+        .card.emerald { background: linear-gradient(180deg, #0d5c4f, #0f4d43); }
+        .card.orange { background: linear-gradient(180deg, #8d3f1d, #6f3016); }
+        .card.gray { background: linear-gradient(180deg, #565656, #404040); }
+        .pipeline { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; margin: 18px 0 10px; }
+        .pipe-card { padding: 18px 22px; border-radius: 16px; min-width: 210px; text-align: center; font-weight: 800; border: 1px solid rgba(255,255,255,.25); }
+        .pipe-card.purple { background: #5146a0; }
+        .pipe-card.teal { background: #115d4f; }
+        .pipe-card.amber { background: #8f4b1d; }
+        .pipe-card.rust { background: #6f301a; }
+        .pipe-card.gold { background: #8c5b0b; }
+        .arrow { color: #aaa; font-size: 2rem; font-weight: 700; }
+        .scan-results { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+        .scan-card { background: #141414; border: 1px solid rgba(255,255,255,.15); border-radius: 18px; padding: 16px; }
+        .scan-card header { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; margin-bottom: 10px; }
+        .scan-card h3 { margin: 0; font-size: 1.1rem; }
+        .scan-card header span { color: #9ad7ff; font-weight: 700; }
+        .scan-card p { color: #d7d1de; line-height: 1.45; }
+        .cve-list { margin-top: 10px; display: grid; gap: 10px; }
+        .cve { border-radius: 14px; padding: 12px; border-left: 6px solid; background: rgba(255,255,255,.03); }
+        .cve.critical { border-left-color: #ff4d5d; }
+        .cve.high { border-left-color: #ff8b4d; }
+        .cve.medium { border-left-color: #ffc94d; }
+        .cve.low { border-left-color: #59d48f; }
+        .cve.info { border-left-color: #7aa7ff; }
+        .cve strong { display: block; margin-bottom: 4px; }
+        .cve span { color: #f5d7a3; font-size: .95rem; }
+        .cve p, .empty { margin: 8px 0 0; color: #c7c0ce; }
+        .alert-box, .demo-box { background: #161616; border: 1px solid rgba(255,255,255,.15); border-radius: 18px; padding: 16px; margin-top: 16px; }
+        .alert-box h3, .demo-box h3 { margin-top: 0; }
+        .pill { display: inline-block; padding: 4px 10px; border-radius: 999px; background: #2a2a2a; margin-right: 8px; margin-bottom: 8px; }
+        .pill.live { background: #14532d; color: #bbf7d0; }
+        .pill.unavailable { background: #3f3f46; color: #e4e4e7; }
+        .pill.error { background: #7f1d1d; color: #fecaca; }
+        .pill.sent { background: #14532d; color: #bbf7d0; }
+        .footer-note { color: var(--muted); margin-top: 24px; font-size: .95rem; }
+        @media (max-width: 700px) {
+            .wrap { padding: 18px 14px 40px; }
+            .hero h1 { font-size: 2rem; }
+            .arrow { display: none; }
+            .pipe-card { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <header class="hero">
+            <h1>ReconXpose</h1>
+            <p>Advanced network vulnerability intelligence platform</p>
+        </header>
+
+        <section class="metrics">
+            <div class="metric"><strong>1</strong><span>Unique hosts</span></div>
+            <div class="metric"><strong>5</strong><span>Ports/services discovered</span></div>
+            <div class="metric"><strong>3</strong><span>Total CVEs found</span></div>
+            <div class="metric"><strong>0</strong><span>Critical CVEs</span></div>
+        </section>
+
+        
+    <section class="section">
+        <div class="section-title teal">Core engine — carried from ReconXpose (100% complete)</div>
+        <div class="section-subtitle">Core scanning and enrichment pipeline</div>
+        <div class="grid">
+            <div class="card teal">
+                <h3>Host discovery</h3>
+                <p>Nmap ping sweep</p>
+            </div>
+            
+            <div class="card teal">
+                <h3>Port scanner</h3>
+                <p>TCP/UDP, banners</p>
+            </div>
+            
+            <div class="card teal">
+                <h3>CVE lookup</h3>
+                <p>NVD API integration</p>
+            </div>
+            
+            <div class="card teal">
+                <h3>JSON report gen.</h3>
+                <p>Structured output</p>
+            </div>
+            </div>
+    </section>
+    
+        
+    <section class="section">
+        <div class="section-title orange">6 new modules — what makes ReconXpose unique</div>
+        <div class="section-subtitle">Roadmap features shown in the architecture mockup</div>
+        <div class="grid">
+            <div class="card orange">
+                <h3>HTML report export</h3>
+                <p>Browser-readable output with severity colour codes</p>
+            </div>
+            
+            <div class="card orange">
+                <h3>Multi-target scanning</h3>
+                <p>Batch IP / subnet input, parallel scan threads</p>
+            </div>
+            
+            <div class="card orange">
+                <h3>OS detection module</h3>
+                <p>Nmap OS fingerprinting, OS-specific CVE filter</p>
+            </div>
+            
+            <div class="card orange">
+                <h3>Web dashboard</h3>
+                <p>Flask UI to visualise scan results live</p>
+            </div>
+            
+            <div class="card orange">
+                <h3>Shodan API integration</h3>
+                <p>Passive recon layer for internet-exposed hosts</p>
+            </div>
+            
+            <div class="card orange">
+                <h3>Critical CVE alerts</h3>
+                <p>Email alert when CVSS score exceeds 7.0</p>
+            </div>
+            </div>
+    </section>
+    
+
+        <section class="section">
+            <div class="section-title blue">Full ReconXpose pipeline</div>
+            <div class="pipeline">
+                <div class="pipe-card purple">Input targets</div>
+                <div class="arrow">→</div>
+                <div class="pipe-card teal">Host discovery</div>
+                <div class="arrow">→</div>
+                <div class="pipe-card teal">Port + OS scan</div>
+                <div class="arrow">→</div>
+                <div class="pipe-card teal">Service enumeration</div>
+                <div class="arrow">↓</div>
+                <div class="pipe-card amber">CVE + Shodan lookup</div>
+                <div class="arrow">←</div>
+                <div class="pipe-card rust">Alert engine</div>
+                <div class="arrow">←</div>
+                <div class="pipe-card gold">Report / Dashboard</div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-title teal">Integration status</div>
+            <div class="status-box">
+                <div class="status-card"><h4>NVD</h4><span class="status live">live</span></div>
+                <div class="status-card"><h4>Shodan</h4><span class="status live">live</span></div>
+                <div class="status-card"><h4>Email alerts</h4><span class="status not_sent">not_sent</span></div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-title green">Why ReconXpose is unique vs existing tools</div>
+            <div class="grid">
+                
+                <div class="card gray"><h3>vs Nmap alone</h3><p>Adds CVE lookup + HTML reports + alerts in one pipeline</p></div>
+                
+                <div class="card gray"><h3>vs Shodan alone</h3><p>Adds active scanning + real-time OS detect + dashboard view</p></div>
+                
+                <div class="card gray"><h3>vs OpenVAS</h3><p>Lightweight Python tool, no heavy setup, custom email + Shodan layer</p></div>
+                
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-title gold">Updated technology stack</div>
+            <div class="grid">
+                
+                <div class="card orange"><h3>Python 3</h3><p>Core language</p></div>
+                
+                <div class="card orange"><h3>Nmap / python-nmap</h3><p>Scanning engine</p></div>
+                
+                <div class="card orange"><h3>Flask</h3><p>Web dashboard</p></div>
+                
+                <div class="card orange"><h3>Shodan API</h3><p>Passive recon</p></div>
+                
+                <div class="card orange"><h3>NVD / CVE API</h3><p>Vulnerability data</p></div>
+                
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-title teal">Scan results</div>
+            <div class="table-wrap">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Host</th>
+                            <th>Port</th>
+                            <th>Service</th>
+                            <th>Product</th>
+                            <th>Version</th>
+                            <th>OS</th>
+                            <th>CVEs</th>
+                            <th>Shodan</th>
+                            <th>Email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        <tr>
+                            <td>scanme.nmap.org</td>
+                            <td>21/tcp</td>
+                            <td>tcpwrapped</td>
+                            <td>Unknown</td>
+                            <td>Unknown</td>
+                            <td>Linux 5.4</td>
+                            <td>
+                                
+                                    <span class="status unavailable">No CVEs</span>
+                                
+                            </td>
+                            <td>
+                                <span class="status live">live</span>
+                                <div style="margin-top:8px">Shodan found 5 exposed ports for 45.33.32.156.</div>
+                                <div>Org: Linode | Country: United States | Vulns: 0</div>
+                            </td>
+                            <td>
+                                <span class="status not_sent">not_sent</span>
+                                <div style="margin-top:8px">No critical CVEs to alert.</div>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td>scanme.nmap.org</td>
+                            <td>22/tcp</td>
+                            <td>ssh</td>
+                            <td>OpenSSH</td>
+                            <td>6.6.1p1 Ubuntu 2ubuntu2.13</td>
+                            <td>Linux 5.4</td>
+                            <td>
+                                
+                                    
+                                        <div class="cve medium"><strong>CVE-2014-2532</strong><span>Score 4.9</span></div>
+                                    
+                                        <div class="cve medium"><strong>CVE-2014-2653</strong><span>Score 5.8</span></div>
+                                    
+                                
+                            </td>
+                            <td>
+                                <span class="status live">live</span>
+                                <div style="margin-top:8px">Shodan found 5 exposed ports for 45.33.32.156.</div>
+                                <div>Org: Linode | Country: United States | Vulns: 0</div>
+                            </td>
+                            <td>
+                                <span class="status not_sent">not_sent</span>
+                                <div style="margin-top:8px">No critical CVEs to alert.</div>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td>scanme.nmap.org</td>
+                            <td>80/tcp</td>
+                            <td>http</td>
+                            <td>Apache httpd</td>
+                            <td>2.4.7</td>
+                            <td>Linux 5.4</td>
+                            <td>
+                                
+                                    
+                                        <div class="cve high"><strong>CVE-2021-44224</strong><span>Score 8.2</span></div>
+                                    
+                                
+                            </td>
+                            <td>
+                                <span class="status live">live</span>
+                                <div style="margin-top:8px">Shodan found 5 exposed ports for 45.33.32.156.</div>
+                                <div>Org: Linode | Country: United States | Vulns: 0</div>
+                            </td>
+                            <td>
+                                <span class="status error">error</span>
+                                <div style="margin-top:8px">(535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials d9443c01a7336-2b5faa30134sm161262765ad.30 - gsmtp')</div>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td>scanme.nmap.org</td>
+                            <td>9929/tcp</td>
+                            <td>nping-echo</td>
+                            <td>Nping echo</td>
+                            <td>Unknown</td>
+                            <td>Linux 5.4</td>
+                            <td>
+                                
+                                    <span class="status unavailable">No CVEs</span>
+                                
+                            </td>
+                            <td>
+                                <span class="status live">live</span>
+                                <div style="margin-top:8px">Shodan found 5 exposed ports for 45.33.32.156.</div>
+                                <div>Org: Linode | Country: United States | Vulns: 0</div>
+                            </td>
+                            <td>
+                                <span class="status not_sent">not_sent</span>
+                                <div style="margin-top:8px">No critical CVEs to alert.</div>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td>scanme.nmap.org</td>
+                            <td>31337/tcp</td>
+                            <td>tcpwrapped</td>
+                            <td>Unknown</td>
+                            <td>Unknown</td>
+                            <td>Linux 5.4</td>
+                            <td>
+                                
+                                    <span class="status unavailable">No CVEs</span>
+                                
+                            </td>
+                            <td>
+                                <span class="status live">live</span>
+                                <div style="margin-top:8px">Shodan found 5 exposed ports for 45.33.32.156.</div>
+                                <div>Org: Linode | Country: United States | Vulns: 0</div>
+                            </td>
+                            <td>
+                                <span class="status not_sent">not_sent</span>
+                                <div style="margin-top:8px">No critical CVEs to alert.</div>
+                            </td>
+                        </tr>
+                        
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <div class="footer-note">Generated from scan_report.json.</div>
+    </div>
+</body>
+</html>

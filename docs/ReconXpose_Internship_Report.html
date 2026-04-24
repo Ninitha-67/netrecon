@@ -1,0 +1,249 @@
+<!doctype html>
+<html><head><meta charset='utf-8'><title>ReconXpose Internship Report</title>
+<style>body{font-family:Arial,Helvetica,sans-serif;max-width:980px;margin:40px auto;padding:0 18px;line-height:1.6}h1,h2,h3{color:#0f172a}pre{background:#f4f4f4;padding:12px;overflow:auto;border-radius:8px}code{background:#f4f4f4;padding:2px 4px;border-radius:4px}</style>
+</head><body>
+<h1>ReconXpose Internship Report</h1>
+<h2>Title Page</h2>
+<p>Project Title: ReconXpose - Advanced Network Vulnerability Intelligence Platform</p>
+<p>Submitted by: Ninit N</p>
+<p>Program: Internship Project Report</p>
+<p>Domain: Cyber Security / Network Reconnaissance</p>
+<p>Institution: College Submission Copy</p>
+<p>Academic Year: 2025-2026</p>
+<hr>
+<h2>Declaration</h2>
+<p>I declare that the project work titled "ReconXpose" is an original work carried out by me during my internship project period. The content of this report is based on the implementation, testing, and analysis of the developed tool.</p>
+<hr>
+<h2>Certificate</h2>
+<p>This is to certify that the project report titled "ReconXpose" has been successfully completed as an internship project and is submitted for external review.</p>
+<hr>
+<h2>Acknowledgement</h2>
+<p>I express my sincere gratitude to my mentors, faculty members, and peers for their guidance and support throughout the development of ReconXpose. I also acknowledge the open-source community for the tools and libraries that made this project possible.</p>
+<hr>
+<h2>Abstract</h2>
+<p>ReconXpose is a Python-based network reconnaissance and vulnerability intelligence platform designed to scan targets, enumerate services, detect operating systems, query the NVD vulnerability database, integrate Shodan exposure intelligence, and generate both HTML and interactive dashboard outputs. The tool was developed as an improved evolution of a basic network scanning project into a more complete security workflow. The objective was to create a practical, lightweight, and visually presentable security tool suitable for internship demonstration and academic evaluation. ReconXpose supports multi-target scanning, real-time report generation, CVE enrichment, dashboard visualization, and alert-driven analysis.</p>
+<hr>
+<h2>Table of Contents</h2>
+<p>1. Introduction</p>
+<p>2. Problem Statement</p>
+<p>3. Objectives</p>
+<p>4. Scope of the Project</p>
+<p>5. Technology Stack</p>
+<p>6. Literature Review / Related Tools</p>
+<p>7. System Analysis</p>
+<p>8. System Design</p>
+<p>9. Implementation Details</p>
+<p>10. Modules Description</p>
+<p>11. Testing and Results</p>
+<p>12. Limitations</p>
+<p>13. Future Enhancements</p>
+<p>14. Conclusion</p>
+<p>15. References</p>
+<p>16. Appendices</p>
+<hr>
+<h2>1. Introduction</h2>
+<p>Network reconnaissance is one of the first phases of security assessment and defensive exposure analysis. Before a system can be hardened, it is necessary to understand which hosts are visible, which ports are open, which services are running, what versions are exposed, and whether those services are associated with known vulnerabilities. Many existing tools cover only a single part of this workflow. Some tools scan ports, some provide passive intelligence, and some generate reports, but they often require multiple steps and separate outputs.</p>
+<p>ReconXpose was built to combine the essential elements of reconnaissance and vulnerability intelligence into a single coherent workflow. The project focuses on practical usability, a polished presentation layer, and a lightweight architecture that can run on a standard Python environment. It supports both command-line scanning and a browser-based dashboard for review and demonstration.</p>
+<p>This report documents the purpose, architecture, implementation, testing, and outcomes of the ReconXpose project.</p>
+<h2>2. Problem Statement</h2>
+<p>The primary problem addressed by ReconXpose is the fragmentation of typical reconnaissance workflows. In a basic workflow, an operator may use one tool for scanning, another for report generation, another for vulnerability lookup, and yet another for presentation. This makes the process slower, less consistent, and more difficult to demonstrate in an academic or internship setting.</p>
+<p>The project needed to solve the following problems:</p>
+<ul>
+<li>How to scan one or more targets efficiently.</li>
+<li>How to enrich discovered services with CVE information.</li>
+<li>How to show the output in both machine-readable and human-readable formats.</li>
+<li>How to present the result in a dashboard that is clear enough for review and assessment.</li>
+<li>How to keep the tool lightweight and easy to execute in a lab environment.</li>
+</ul>
+<h2>3. Objectives</h2>
+<p>The objectives of ReconXpose were:</p>
+<ul>
+<li>To build a Python-based recon tool using Nmap.</li>
+<li>To detect services, product versions, and operating systems.</li>
+<li>To query NVD and associate discovered services with matching CVEs.</li>
+<li>To support multi-target scanning.</li>
+<li>To integrate Shodan exposure intelligence.</li>
+<li>To trigger email alerts for critical CVEs.</li>
+<li>To generate JSON and HTML reports.</li>
+<li>To provide a Flask dashboard with interactive visualization.</li>
+<li>To rename and rebrand the tool as ReconXpose for uniqueness.</li>
+</ul>
+<h2>4. Scope of the Project</h2>
+<p>The project scope includes active network scanning, enrichment from public vulnerability sources, report generation, and dashboard presentation. The project does not include exploitation, bypass, persistence, or offensive actions. It is intended for authorized lab targets, academic demonstration, and controlled internal use.</p>
+<p>The tool is designed to work with:</p>
+<ul>
+<li>A single target host</li>
+<li>A comma-separated list of multiple targets</li>
+<li>Lab environments such as `scanme.nmap.org`</li>
+<li>Local hosts for smoke testing</li>
+</ul>
+<h2>5. Technology Stack</h2>
+<p>ReconXpose uses the following technologies:</p>
+<ul>
+<li>Python 3</li>
+<li>python-nmap</li>
+<li>requests</li>
+<li>tabulate</li>
+<li>python-dotenv</li>
+<li>Flask</li>
+<li>NVD API</li>
+<li>Shodan API</li>
+<li>SMTP email via Gmail or compatible providers</li>
+</ul>
+<h2>6. Literature Review / Related Tools</h2>
+<p>Several tools inspired the project design.</p>
+<h3>6.1 Nmap</h3>
+<p>Nmap is the core scanning engine used to discover live hosts, open ports, and service banners. It is widely used in security assessment because of its flexibility, speed, and maturity.</p>
+<h3>6.2 Shodan</h3>
+<p>Shodan is a search engine for internet-connected devices. It provides passive exposure intelligence and helps identify what the internet can already see about a host.</p>
+<h3>6.3 OpenVAS / Vulnerability Scanners</h3>
+<p>Traditional vulnerability scanners are powerful but often heavier to set up. They may require larger infrastructure or longer scan times. ReconXpose is designed as a lighter, more presentation-friendly workflow.</p>
+<h3>6.4 NVD</h3>
+<p>The NVD database is used to correlate discovered services with known CVEs. This adds vulnerability context to the raw scan results.</p>
+<h2>7. System Analysis</h2>
+<p>Before implementation, the project was analyzed as a pipeline consisting of input, discovery, enrichment, alerting, and reporting.</p>
+<h3>7.1 Input Layer</h3>
+<p>The input layer accepts one or more targets in a single command or through the dashboard.</p>
+<h3>7.2 Discovery Layer</h3>
+<p>Nmap is used to identify open ports and services. Service versions are extracted when available.</p>
+<h3>7.3 Enrichment Layer</h3>
+<p>The discovered product/version values are queried against NVD to obtain CVE matches.</p>
+<h3>7.4 Intelligence Layer</h3>
+<p>Shodan is used to obtain exposure information for live hosts when credentials are configured.</p>
+<h3>7.5 Alert Layer</h3>
+<p>Critical CVEs can trigger an email alert.</p>
+<h3>7.6 Output Layer</h3>
+<p>Outputs include JSON, HTML, and dashboard views.</p>
+<h2>8. System Design</h2>
+<p>The architecture is based on a modular separation of concerns.</p>
+<h3>8.1 Core Pipeline</h3>
+<p>The core pipeline flows as follows:</p>
+<p>Input targets -> Host discovery -> Port + OS scan -> Service enumeration -> CVE + Shodan lookup -> Alert engine -> Report / Dashboard</p>
+<h3>8.2 Dashboard Design</h3>
+<p>The dashboard provides:</p>
+<ul>
+<li>Summary cards</li>
+<li>Risk overview meter</li>
+<li>Severity donut chart</li>
+<li>Top ports chart</li>
+<li>Search and filter controls</li>
+<li>Interactive host detail drawer</li>
+<li>Results table</li>
+</ul>
+<h3>8.3 Report Design</h3>
+<p>The static HTML report provides:</p>
+<ul>
+<li>A presentation-style summary</li>
+<li>Core engine cards</li>
+<li>Modules section</li>
+<li>Pipeline diagram</li>
+<li>Uniqueness comparison</li>
+<li>Technology stack</li>
+<li>Scan findings</li>
+</ul>
+<h2>9. Implementation Details</h2>
+<h3>9.1 `main.py`</h3>
+<p>`main.py` is the command-line and dashboard launcher. It handles target parsing, Nmap scanning, CVE enrichment, Shodan lookup, email alerts, JSON writing, and report generation.</p>
+<h3>9.2 `report_generator.py`</h3>
+<p>This module renders both the static report and the interactive dashboard. It also exposes the Flask app and browser scan endpoint.</p>
+<h3>9.3 Environment Variables</h3>
+<p>The project uses environment variables for sensitive values:</p>
+<ul>
+<li>`NVD_API_KEY`</li>
+<li>`SHODAN_API_KEY`</li>
+<li>`SMTP_HOST`</li>
+<li>`SMTP_PORT`</li>
+<li>`SMTP_USER`</li>
+<li>`SMTP_PASSWORD`</li>
+<li>`ALERT_FROM_EMAIL`</li>
+<li>`ALERT_TO_EMAIL`</li>
+<li>`SMTP_USE_TLS`</li>
+</ul>
+<h2>10. Modules Description</h2>
+<h3>10.1 Target Parsing Module</h3>
+<p>Parses single or multiple targets and supports comma-separated input.</p>
+<h3>10.2 Nmap Scanning Module</h3>
+<p>Scans targets for open ports, service names, service versions, and OS guesses.</p>
+<h3>10.3 CVE Lookup Module</h3>
+<p>Queries NVD using extracted product and version values.</p>
+<h3>10.4 Shodan Lookup Module</h3>
+<p>Looks up live hosts and summarizes exposure.</p>
+<h3>10.5 Email Alert Module</h3>
+<p>Sends a notification when critical CVEs are found.</p>
+<h3>10.6 JSON Report Module</h3>
+<p>Writes a structured machine-readable output file.</p>
+<h3>10.7 HTML Report Module</h3>
+<p>Produces a polished offline summary report.</p>
+<h3>10.8 Flask Dashboard Module</h3>
+<p>Displays scan results with charts, filters, and interactive controls.</p>
+<h2>11. Testing and Results</h2>
+<p>The tool was tested on:</p>
+<ul>
+<li>`127.0.0.1`</li>
+<li>`scanme.nmap.org`</li>
+<li>Multi-target input strings</li>
+</ul>
+<h3>11.1 Functional Checks</h3>
+<ul>
+<li>Scan execution completed successfully.</li>
+<li>JSON report was generated.</li>
+<li>HTML report was generated.</li>
+<li>Dashboard loaded successfully.</li>
+<li>NVD CVE lookup returned matches.</li>
+<li>Shodan lookup worked when credentials were configured.</li>
+<li>Email alert path was verified with SMTP configuration.</li>
+</ul>
+<h3>11.2 Sample Observations</h3>
+<p>Sample scan output showed open ports such as SSH, SMTP, HTTP, MSRPC, and SMB-related services. The NVD enrichment produced CVE IDs and scores for matching services. The dashboard summarized the results using cards, severity meters, a donut visualization, and row-level detail views.</p>
+<h2>12. Limitations</h2>
+<p>Current limitations include:</p>
+<ul>
+<li>Dependence on external API keys for full intelligence features.</li>
+<li>Accuracy of CVE matching depends on Nmap product/version quality.</li>
+<li>Email delivery depends on SMTP provider settings.</li>
+<li>Shodan results may vary by host and available exposure.</li>
+</ul>
+<h2>13. Future Enhancements</h2>
+<p>Planned improvements include:</p>
+<ul>
+<li>Export to PDF directly from the tool.</li>
+<li>Host history and scan comparison.</li>
+<li>Save dashboard snapshots.</li>
+<li>Advanced charts and trend analysis.</li>
+<li>Role-based dashboard access.</li>
+<li>Better alert customization.</li>
+</ul>
+<h2>14. Conclusion</h2>
+<p>ReconXpose successfully evolved from a basic recon script into a complete vulnerability intelligence workflow. The project now supports active scanning, OS inference, CVE enrichment, live exposure intelligence, email alerting, and polished reporting. It is suitable for internship demonstration because it is practical, modular, presentable, and easy to explain in a live review.</p>
+<h2>15. References</h2>
+<ul>
+<li>Nmap official documentation</li>
+<li>NVD API documentation</li>
+<li>Shodan API documentation</li>
+<li>Flask documentation</li>
+<li>Python requests documentation</li>
+</ul>
+<h2>16. Appendices</h2>
+<h3>Appendix A: Example Run Command</h3>
+<pre>
+python main.py "scanme.nmap.org"
+</pre>
+<h3>Appendix B: Dashboard Command</h3>
+<pre>
+python main.py --web
+</pre>
+<h3>Appendix C: Environment Setup</h3>
+<pre>
+$env:NVD_API_KEY="..."
+$env:SHODAN_API_KEY="..."
+$env:SMTP_HOST="smtp.gmail.com"
+</pre>
+<h3>Appendix D: Notes for Presentation</h3>
+<ul>
+<li>Start with the problem statement.</li>
+<li>Show CLI scan output.</li>
+<li>Show the HTML report.</li>
+<li>Show the dashboard.</li>
+<li>Explain what is live and what is configured by API keys.</li>
+</ul>
+</body></html>

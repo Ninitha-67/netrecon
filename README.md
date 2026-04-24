@@ -1,88 +1,92 @@
-# 🔍 NetRecon – Network Recon & Vulnerability Scanner
+# ReconXpose
 
-A Python-based offensive security tool that performs **network reconnaissance**, identifies open ports, detects services and versions, and queries the **NVD database for vulnerabilities (CVEs)**. This tool generates **tabular console reports** and a **JSON report** for analysis.
+Network reconnaissance and vulnerability reporting tool with CLI and Flask dashboard modes.
 
----
+## Features
 
-## 🚀 Project Overview
-NetRecon automates network scanning and vulnerability enumeration using:
+- Multi-target Nmap scanning
+- Service/version enumeration
+- Best-effort OS detection
+- Optional NVD CVE enrichment
+- Real Shodan host lookups
+- Real SMTP email alerts for critical CVEs
+- HTML dashboard report
+- Flask dashboard viewer
 
-- **Nmap** for port scanning and service/version detection
-- **Requests** to query the NVD API for CVE information
-- **Tabulate** for structured console output
-- **JSON report generation** for further analysis
+## Requirements
 
-It’s designed for **educational purposes** and ethical hacking practice in controlled environments.
+- Python 3
+- Nmap installed on the system
 
----
+## Install
 
-## 🎯 Key Features
-
-- Port scanning and service/version detection using Nmap (`-sV`)
-- Automatic lookup of vulnerabilities from NVD (CVE IDs + CVSS scores)
-- Fuzzy search for vulnerabilities (full version, major version, product only)
-- Tabulated console output for readability
-- JSON report saved for record keeping
-- Graceful handling of unknown versions and missing CVEs
-
----
-
-## 🧰 Tools & Technologies
-
-- **Python 3.11**
-- **Libraries**: `python-nmap`, `requests`, `tabulate`, `python-dotenv`
-- **NVD API** for vulnerability data
-- **JSON** and **tabulate** for reporting
-
----
-
-## 📦 Project Structure
-
-```netrecon/
-├── main.py    # Entry point: scan + CVE lookup + report generation
-├── recon.py       # Core Nmap scanning and service enumeration functions
-├── requirements.txt   # Python dependencies
-├── scan_report.json   # Generated JSON report of scan results
-├── .env               # Optional: Store NVD_API_KEY securely
-└── README.md          # Project overview and instructions
-```
-
----
-
-## 🚀 How to Run
-
-### 1️⃣ Clone the repository:
-```
-git clone https://github.com/Ninitha-67/netrecon.git
-cd netrecon
-```
-### 2️⃣ Install dependencies:
-```
+```bash
 pip install -r requirements.txt
 ```
-### 3️⃣ (Optional) Set NVD API key for vulnerability lookups:
 
-Windows (PowerShell):
-```
+## Optional environment variables
+
+Set your NVD API key if you want CVE enrichment:
+
+```powershell
 $env:NVD_API_KEY="your_api_key_here"
 ```
-### 4️⃣ Run the tool:
+
+You can also place it in a `.env` file.
+
+Shodan:
+
+```powershell
+$env:SHODAN_API_KEY="your_shodan_key"
 ```
 
-python main.py
+SMTP alerts:
+
+```powershell
+$env:SMTP_HOST="smtp.gmail.com"
+$env:SMTP_PORT="587"
+$env:SMTP_USER="your_email@example.com"
+$env:SMTP_PASSWORD="your_app_password"
+$env:ALERT_FROM_EMAIL="your_email@example.com"
+$env:ALERT_TO_EMAIL="target_email@example.com"
 ```
----
 
-## ⚠️ Disclaimer
+Optional:
 
-This project is strictly for educational purposes. Do NOT scan or exploit networks without permission. Always follow responsible disclosure practices.
+```powershell
+$env:SMTP_USE_TLS="true"
+```
 
----
+## Run CLI scan
 
-## 👩‍💻 Author
+```bash
+python main.py 127.0.0.1
+```
 
--Ninitha P – final Year BCA Student | Cybersecurity Enthusiast
+Multiple targets:
 
--Guided by mentors for academic research & SOC tools
+```bash
+python main.py "127.0.0.1,scanme.nmap.org"
+```
 
----
+## Run dashboard
+
+```bash
+python main.py --web
+```
+
+Then open `http://127.0.0.1:5000`.
+
+## Output
+
+- `scan_report.json`
+- `reconxpose_report.html`
+
+## Author
+
+- Ninitha P – Final Year BCA Student | Cybersecurity Enthusiast
+- Guided by mentors for academic research and SOC tooling
+
+## Disclaimer
+
+Use only on systems you are authorized to test.
